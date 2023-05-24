@@ -7,9 +7,9 @@ export class Schedule_of_trains_entity {
 
   @Column()
   Number_of_train: string;
-  
+
   @Column()
-  Type_of_train : string
+  Type_of_train: string;
 
   @Column()
   Path_of_train: string;

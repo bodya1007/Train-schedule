@@ -1,12 +1,23 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, UsePipes} from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Put,
+  Param,
+  Delete,
+  UsePipes,
+} from '@nestjs/common';
 import { Schedule_of_trains_service } from './schedule_of_trains.service';
 import { Create_schedule_of_train_dto } from './dto/create-schedule_of_trains.dto';
 import { Update_schedule_of_train_dto } from './dto/update-schedule_of_trains.dto';
-import { Validation_pipe } from '../pipes/validation.pipe'
+import { Validation_pipe } from '../pipes/validation.pipe';
 
 @Controller('schedule-of-trains')
 export class Schedule_of_trains_controller {
-  constructor(private readonly scheduleOfTrainService: Schedule_of_trains_service) { }
+  constructor(
+    private readonly scheduleOfTrainService: Schedule_of_trains_service,
+  ) {}
 
   @UsePipes(Validation_pipe)
   @Post()
@@ -25,8 +36,14 @@ export class Schedule_of_trains_controller {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateScheduleOfTrainDto: Update_schedule_of_train_dto) {
-    return this.scheduleOfTrainService.updatePath(+id, updateScheduleOfTrainDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateScheduleOfTrainDto: Update_schedule_of_train_dto,
+  ) {
+    return this.scheduleOfTrainService.updatePath(
+      +id,
+      updateScheduleOfTrainDto,
+    );
   }
 
   @Delete(':id')

@@ -17,8 +17,9 @@ import { ConfigModule } from '@nestjs/config';
       entities: [Schedule_of_trains_entity],
       synchronize: true,
     }),
-    Schedule_of_trains_module],
+    Schedule_of_trains_module,
+  ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

@@ -15,7 +15,7 @@ describe('Schedule_of_trains_service', () => {
     Departure_time: String(new Date()),
     Number_of_train: '001',
     Path_of_train: 'A -> B',
-    Type_of_train: 'name0ftrain'
+    Type_of_train: 'name0ftrain',
   };
 
   beforeEach(async () => {
@@ -29,8 +29,12 @@ describe('Schedule_of_trains_service', () => {
       ],
     }).compile();
 
-    service = module.get<Schedule_of_trains_service>(Schedule_of_trains_service);
-    repository = module.get<Repository<Schedule_of_trains_entity>>(getRepositoryToken(Schedule_of_trains_entity));
+    service = module.get<Schedule_of_trains_service>(
+      Schedule_of_trains_service,
+    );
+    repository = module.get<Repository<Schedule_of_trains_entity>>(
+      getRepositoryToken(Schedule_of_trains_entity),
+    );
   });
 
   describe('createPath', () => {
@@ -40,7 +44,7 @@ describe('Schedule_of_trains_service', () => {
         Departure_time: '11:00',
         Number_of_train: '123',
         Path_of_train: 'A->B',
-        Type_of_train:'namedd'
+        Type_of_train: 'namedd',
       };
       const entity = new Schedule_of_trains_entity();
       entity.id = 1;
@@ -48,7 +52,7 @@ describe('Schedule_of_trains_service', () => {
       entity.Departure_time = dto.Departure_time;
       entity.Number_of_train = dto.Number_of_train;
       entity.Path_of_train = dto.Path_of_train;
-      entity.Type_of_train = dto.Type_of_train
+      entity.Type_of_train = dto.Type_of_train;
       jest.spyOn(repository, 'save').mockResolvedValue(entity);
 
       const result = await service.createPath(dto);
@@ -65,14 +69,14 @@ describe('Schedule_of_trains_service', () => {
       entity1.Departure_time = '11:00';
       entity1.Number_of_train = '123';
       entity1.Path_of_train = 'A->B';
-      entity1.Type_of_train ='name'
+      entity1.Type_of_train = 'name';
       const entity2 = new Schedule_of_trains_entity();
       entity2.id = 2;
       entity2.Arrival_time = '11:00';
       entity2.Departure_time = '12:00';
       entity2.Number_of_train = '456';
       entity2.Path_of_train = 'B->C';
-      entity2.Type_of_train ='names'
+      entity2.Type_of_train = 'names';
       const entities = [entity1, entity2];
       jest.spyOn(repository, 'find').mockResolvedValue(entities);
 
@@ -90,13 +94,13 @@ describe('Schedule_of_trains_service', () => {
       entity.Departure_time = '11:00';
       entity.Number_of_train = '123';
       entity.Path_of_train = 'A->B';
-      entity.Type_of_train ='tested'
+      entity.Type_of_train = 'tested';
       jest.spyOn(repository, 'findOne').mockResolvedValue(entity);
 
       const result = await service.findOnePath(1);
 
       expect(result).toEqual(entity);
-    })
+    });
     describe('updatePath', () => {
       it('should update and return the updated schedule of trains', async () => {
         const updatedSchedule: Update_schedule_of_train_dto = {
@@ -105,26 +109,42 @@ describe('Schedule_of_trains_service', () => {
         };
 
         jest.spyOn(repository, 'findOne').mockResolvedValue(mockSchedule);
-        jest.spyOn(repository, 'save').mockResolvedValue({ ...mockSchedule, ...updatedSchedule });
+        jest
+          .spyOn(repository, 'save')
+          .mockResolvedValue({ ...mockSchedule, ...updatedSchedule });
 
-        const result = await service.updatePath(mockSchedule.id, updatedSchedule);
+        const result = await service.updatePath(
+          mockSchedule.id,
+          updatedSchedule,
+        );
 
-        expect(repository.findOne).toHaveBeenCalledWith({ where: { id: mockSchedule.id } });
-        expect(repository.save).toHaveBeenCalledWith({ ...mockSchedule, ...updatedSchedule });
+        expect(repository.findOne).toHaveBeenCalledWith({
+          where: { id: mockSchedule.id },
+        });
+        expect(repository.save).toHaveBeenCalledWith({
+          ...mockSchedule,
+          ...updatedSchedule,
+        });
         expect(result).toEqual({ ...mockSchedule, ...updatedSchedule });
       });
 
       it('should throw an error if the schedule is not found', async () => {
         jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-        await expect(service.updatePath(999, { Arrival_time: String(new Date()), Departure_time: String(new Date()) }))
-          .rejects.toThrow("Cannot convert undefined or null to object");
+        await expect(
+          service.updatePath(999, {
+            Arrival_time: String(new Date()),
+            Departure_time: String(new Date()),
+          }),
+        ).rejects.toThrow('Cannot convert undefined or null to object');
       });
     });
 
     describe('removePath', () => {
       it('should delete the schedule and return a success status', async () => {
-        jest.spyOn(repository, 'delete').mockResolvedValue({ affected: 1, raw: null });
+        jest
+          .spyOn(repository, 'delete')
+          .mockResolvedValue({ affected: 1, raw: null });
 
         const result = await service.removePath(mockSchedule.id);
 
@@ -133,14 +153,15 @@ describe('Schedule_of_trains_service', () => {
       });
 
       it('should return a failure status when unable to delete the schedule', async () => {
-        jest.spyOn(repository, 'delete').mockResolvedValue({ affected: 0, raw: null });
+        jest
+          .spyOn(repository, 'delete')
+          .mockResolvedValue({ affected: 0, raw: null });
 
         const result = await service.removePath(mockSchedule.id);
 
         expect(repository.delete).toHaveBeenCalledWith({ id: mockSchedule.id });
-        expect(result).toEqual("There is no such way");
+        expect(result).toEqual('There is no such way');
       });
     });
-
-  })
-})    
+  });
+});

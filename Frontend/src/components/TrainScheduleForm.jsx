@@ -1,89 +1,134 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './component.css';
 
 function TrainScheduleForm({ setShowModal, updateData, cleanModal, refreshWays }) {
-  const [Departure_time, setDeparture_time] = useState('');
-  const [Arrival_time, setArrival_time] = useState('');
-  const [Path_of_train, setPath_of_train] = useState('');
-  const [Number_of_train, setNumber_of_train] = useState('');
-  const [Type_of_train, setType_of_train] = useState('Passenger');
-
-  if (updateData && updateData != 0 && Departure_time != updateData.Departure_time) {
-    setDeparture_time(updateData.Departure_time);
-    setArrival_time(updateData.Arrival_time);
-    setPath_of_train(updateData.Path_of_train);
-    setNumber_of_train(updateData.Number_of_train);
-    setType_of_train(updateData.Type_of_train);
-  }
-
-  const cleanStateAfterSave = () => {
-    setShowModal(false);
-    cleanModal();
-  };
-
+  const [path, setPath] = useState('');
+  const [departureTime, setDepartureTime] = useState('');
+  const [arrivalTime, setArrivalTime] = useState('');
+  const [trainNumber, setTrainNumber] = useState('');
+  const [TypeOfTrain, setTypeOfTrain] = useState('');
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    const formData = {
+      Path_of_train: path,
+      Departure_time: departureTime,
+      Arrival_time: arrivalTime,
+      Type_of_train: TypeOfTrain,
+      Number_of_train: trainNumber,
+    };
+
     try {
-      const data = {
-        Departure_time: Departure_time,
-        Arrival_time: Arrival_time,
-        Path_of_train: Path_of_train,
-        Number_of_train: Number_of_train,
-        Type_of_train: Type_of_train,
-      };
+      if (updateData.id) {
+        await axios.put(`http://localhost:3005/schedule-of-trains/${updateData.id}`, formData);
 
-      let response;
-
-      if (updateData && updateData != 0) {
-        const id = updateData.id;
-        response = await axios.put(`http://localhost:3005/schedule-of-trains/${id}`, data);
-        alert('path updated');
+        alert('path was update')
       } else {
-        response = await axios.post('http://localhost:3005/schedule-of-trains/', data);
-        alert('path created');
+        await axios.post('http://localhost:3005/schedule-of-trains', formData);
+
+        alert('path was create')
       }
 
-      cleanStateAfterSave();
-      refreshWays(event);
-
+      setShowModal(false);
+      cleanForm();
+      refreshWays();
     } catch (error) {
       error.response.data.forEach((element) => {
         alert(element)
       })
     }
   };
+
+  const cleanForm = () => {
+    setPath('');
+    setDepartureTime('');
+    setArrivalTime('');
+    setTrainNumber('');
+    cleanModal([]);
+  };
+
+  useEffect(() => {
+    if (updateData) {
+      setDepartureTime(updateData.Departure_time);
+      setArrivalTime(updateData.Arrival_time);
+      setPath(updateData.Path_of_train);
+      setTrainNumber(updateData.Number_of_train);
+      setTypeOfTrain(updateData.Type_of_train);
+    }
+  }, [updateData])
+
   return (
-    <div>
-      <span className="close-button" onClick={cleanStateAfterSave}>&times;</span>
-      <form className="train-schedule-form" onSubmit={handleSubmit}>
-        <div className="input-group">
-          <label htmlFor="train-number">Number of train</label>
-          <input type="text" id="train-number" name="train-number" value={Number_of_train} onChange={(event) => setNumber_of_train(event.target.value)} />
-        </div>
-        <div className="input-group">
-          <label htmlFor="train-type">Type of train</label>
-          <select id="train-type" name="train-type" value={Type_of_train} onChange={(event) => setType_of_train(event.target.value)}>
-            <option value="passenger">Passenger</option>
-            <option value="freight">Freight</option>
-          </select>
-        </div>
-        <div className="input-group">
-          <label htmlFor="departure-time">Departure time</label>
-          <input type="time" id="departure-time" name="departure-time" value={Departure_time} onChange={(event) => setDeparture_time(event.target.value)} />
-        </div>
-        <div className="input-group">
-          <label htmlFor="arrival-time">Arrival time</label>
-          <input type="time" id="arrival-time" name="arrival-time" value={Arrival_time} onChange={(event) => setArrival_time(event.target.value)} />
-        </div>
-        <div className="input-group">
-          <label htmlFor="train-path">Path of train</label>
-          <textarea id="train-path" name="train-path" rows="1" value={Path_of_train} onChange={(event) => setPath_of_train(event.target.value)}></textarea>
-        </div>
-        <button type="submit">Submit</button>
-      </form>
-    </div>
+    <form className="train-schedule-form" onSubmit={handleSubmit}>
+      <div className="input-group">
+        <label htmlFor="path">Train route</label>
+        <input
+          type="text"
+          id="path"
+          value={path}
+          onChange={(event) => setPath(event.target.value)}
+          required
+        />
+      </div>
+      <div className="input-group">
+        <label htmlFor="departure-time">Departure time</label>
+        <input
+          type="time"
+          id="departure-time"
+          name="departure-time"
+          value={departureTime}
+          onChange={(event) => setDepartureTime(event.target.value)}
+          required
+        />
+      </div>
+      <div className="input-group">
+        <label htmlFor="arrival-time">Arrival time</label>
+        <input
+          type="time"
+          id="arrival-time"
+          name="arrival-time"
+          value={arrivalTime}
+          onChange={(event) => setArrivalTime(event.target.value)}
+          required
+        />
+      </div>
+      <div className="input-group">
+        <label htmlFor="type-of-train">Train type</label>
+        <input
+          type="text"
+          id="type-of-train"
+          name="type-of-train"
+          value={TypeOfTrain}
+          onChange={(event) => setTypeOfTrain(event.target.value)}
+          required
+        />
+      </div>
+      <div className="input-group">
+        <label htmlFor="trainNumber">Train number</label>
+        <input
+          type="text"
+          id="trainNumber"
+          value={trainNumber}
+          onChange={(event) => setTrainNumber(event.target.value)}
+          required
+        />
+      </div>
+      <div className="button-group">
+        <button className="submit-button" type="submit">
+          Submit
+        </button>
+        <button
+          className="cancel-button"
+          type="button"
+          onClick={() => {
+            setShowModal(false)
+            cleanModal([])
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
   );
 }
 

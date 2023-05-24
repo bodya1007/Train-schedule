@@ -10,7 +10,14 @@ describe('Schedule_of_trains_controller', () => {
   let scheduleOfTrainController: Schedule_of_trains_controller;
   let scheduleOfTrainService: Schedule_of_trains_service;
 
-  const mockSchedule = { id: 1, Number_of_train: 'Schedule 1', Path_of_train: 'a-b', Arrival_time: "09:00", Departure_time: '11:00', Type_of_train:'naming' };
+  const mockSchedule = {
+    id: 1,
+    Number_of_train: 'Schedule 1',
+    Path_of_train: 'a-b',
+    Arrival_time: '09:00',
+    Departure_time: '11:00',
+    Type_of_train: 'naming',
+  };
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -30,7 +37,6 @@ describe('Schedule_of_trains_controller', () => {
     scheduleOfTrainService = moduleRef.get<Schedule_of_trains_service>(
       Schedule_of_trains_service,
     );
-
   });
 
   describe('create', () => {
@@ -40,21 +46,29 @@ describe('Schedule_of_trains_controller', () => {
         Path_of_train: 'Schedule 1',
         Arrival_time: String(new Date()),
         Departure_time: String(new Date()),
-        Type_of_train:'test'
+        Type_of_train: 'test',
       };
 
-      jest.spyOn(scheduleOfTrainService, 'createPath').mockResolvedValue(mockSchedule);
+      jest
+        .spyOn(scheduleOfTrainService, 'createPath')
+        .mockResolvedValue(mockSchedule);
 
-      const result = await scheduleOfTrainController.create(create_schedule_dto);
+      const result = await scheduleOfTrainController.create(
+        create_schedule_dto,
+      );
 
-      expect(scheduleOfTrainService.createPath).toHaveBeenCalledWith(create_schedule_dto);
+      expect(scheduleOfTrainService.createPath).toHaveBeenCalledWith(
+        create_schedule_dto,
+      );
       expect(result).toBe(mockSchedule);
     });
   });
 
   describe('findAll', () => {
     it('should return an array of schedules', async () => {
-      jest.spyOn(scheduleOfTrainService, 'findAllPaths').mockResolvedValue([mockSchedule]);
+      jest
+        .spyOn(scheduleOfTrainService, 'findAllPaths')
+        .mockResolvedValue([mockSchedule]);
 
       const result = await scheduleOfTrainController.findAll();
 
@@ -65,7 +79,9 @@ describe('Schedule_of_trains_controller', () => {
 
   describe('findOne', () => {
     it('should return a single schedule', async () => {
-      jest.spyOn(scheduleOfTrainService, 'findOnePath').mockResolvedValue(mockSchedule);
+      jest
+        .spyOn(scheduleOfTrainService, 'findOnePath')
+        .mockResolvedValue(mockSchedule);
 
       const result = await scheduleOfTrainController.findOne('1');
 
@@ -76,7 +92,7 @@ describe('Schedule_of_trains_controller', () => {
     it('should throw an error if the schedule is not found', async () => {
       jest.spyOn(scheduleOfTrainService, 'findOnePath').mockResolvedValue(null);
 
-      await expect(null)
+      await expect(null);
     });
   });
 
@@ -87,20 +103,30 @@ describe('Schedule_of_trains_controller', () => {
       mockUpdatedSchedule.Arrival_time = '10:00';
       mockUpdatedSchedule.Departure_time = '11:00';
 
-      jest.spyOn(scheduleOfTrainService, 'updatePath').mockResolvedValue(mockUpdatedSchedule);
+      jest
+        .spyOn(scheduleOfTrainService, 'updatePath')
+        .mockResolvedValue(mockUpdatedSchedule);
 
-      const result = await scheduleOfTrainController.update(mockScheduleId.toString(), mockUpdatedSchedule);
+      const result = await scheduleOfTrainController.update(
+        mockScheduleId.toString(),
+        mockUpdatedSchedule,
+      );
 
-      expect(scheduleOfTrainService.updatePath).toHaveBeenCalledWith(mockScheduleId, mockUpdatedSchedule);
+      expect(scheduleOfTrainService.updatePath).toHaveBeenCalledWith(
+        mockScheduleId,
+        mockUpdatedSchedule,
+      );
       expect(result).toEqual(mockUpdatedSchedule);
     });
-  })
+  });
   describe('remove', () => {
     it('should remove a schedule of train with a valid ID', async () => {
       // Arrange
       const id = '1';
       const expectedResult = { message: 'Schedule of train has been deleted' };
-      jest.spyOn(scheduleOfTrainService, 'removePath').mockResolvedValue(expectedResult.message);
+      jest
+        .spyOn(scheduleOfTrainService, 'removePath')
+        .mockResolvedValue(expectedResult.message);
 
       // Act
       const result = await scheduleOfTrainController.remove(id);
@@ -112,11 +138,14 @@ describe('Schedule_of_trains_controller', () => {
     it('should throw an error with an invalid ID', async () => {
       // Arrange
       const id = 'invalid-id';
-      jest.spyOn(scheduleOfTrainService, 'removePath').mockRejectedValue(new Error('Invalid ID'));
+      jest
+        .spyOn(scheduleOfTrainService, 'removePath')
+        .mockRejectedValue(new Error('Invalid ID'));
 
       // Act & Assert
-      await expect(scheduleOfTrainController.remove(id)).rejects.toThrow('Invalid ID');
+      await expect(scheduleOfTrainController.remove(id)).rejects.toThrow(
+        'Invalid ID',
+      );
     });
   });
-})
-
+});
